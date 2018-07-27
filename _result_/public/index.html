@@ -57,32 +57,8 @@
   <div id="app">
     <!-- Always shows a header, even in smaller screens. -->
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
-          <!-- Title -->
-          <span class="mdl-layout-title">Shopping List</span>
-          <!-- Add spacer, to align navigation to the right -->
-          <div class="mdl-layout-spacer"></div>
-          <!-- Navigation. We hide it in small screens. -->
-          <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link" href="index.html">Home</a>
-            <a class="mdl-navigation__link" href="history.html">History</a>
-            <a onclick="pageEvents.showLogin()" style="cursor: pointer" class="mdl-navigation__link login">Login</a>
-            <a onclick="pageEvents.showRegister()" style="cursor: pointer" class="mdl-navigation__link register">Register</a>
-            <a onclick="pageEvents.signout()" style="cursor: pointer" class="mdl-navigation__link logout">Logout</a>
-          </nav>
-        </div>
-      </header>
-      <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Shopping List</span>
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="index.html">Home</a>
-          <a class="mdl-navigation__link" href="history.html">History</a>
-          <a onclick="pageEvents.showLogin()" style="cursor: pointer" class="mdl-navigation__link login">Login</a>
-          <a onclick="pageEvents.showRegister()" style="cursor: pointer" class="mdl-navigation__link register">Register</a>
-          <a onclick="pageEvents.signout()" style="cursor: pointer" class="mdl-navigation__link logout">Logout</a>
-        </nav>
-      </div>
+
+      <navigation v-bind:is-logged-in="isLoggedIn" v-bind:toggle-logged-in="toggleLoggedIn"></navigation>
       <main class="mdl-layout__content">
         <div class="page-content">
           <!-- Your content goes here -->
@@ -129,22 +105,35 @@
                     </button>
                   </th>
                 </tr>
+
               </thead>
               <tbody>
-
+                <tr v-for="item in items" :key="item._id">
+                  <td class="mdl-data-table__cell--non-numeric">{{ item.name}}</td>
+                  <td class="mdl-data-table__cell--non-numeric">{{ item.cost}}</td>
+                  <td class="mdl-data-table__cell--non-numeric">{{ item.quantity}}</td>
+                  <td class="mdl-data-table__cell">{{ item.subTotal}}</td>
+                  <td class="mdl-data-table__cell--non-numeric">
+                    <button @click="deleteRow(item._id)" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                      <i class="material-icons">remove</i>
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
 
           <div class="mdl-grid center-items">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="number" id="total-cost" readonly value="0">
-              <label class="mdl-textfield__label" for="cost">Total Item Cost</label>
+              <!-- <input class="mdl-textfield__input" type="number" id="total-cost" readonly value="0">
+              <label class="mdl-textfield__label" for="cost">Total Item Cost</label> -->
+              <h4>Total Cost: {{ total }}</h4>
             </div>
+
           </div>
 
           <div class="mdl-grid center-items">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="pageEvents.saveList()">
+            <button @click="saveList" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
               Save List
             </button>
           </div>
@@ -160,88 +149,16 @@
       </main>
     </div>
 
-    <dialog id="login-dialog" class="mdl-dialog">
-      <h4 class="mdl-dialog__title">Login</h4>
-      <div class="mdl-dialog__content">
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="text" id="login-username">
-            <label class="mdl-textfield__label" for="login-username">Username</label>
-          </div>
-        </div>
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="password" id="login-password">
-            <label class="mdl-textfield__label" for="login-password">Password</label>
-          </div>
-        </div>
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <span id="login-error"></span>
-          </div>
-        </div>
-      </div>
-      <div class="mdl-dialog__actions">
-        <button onclick="pageEvents.closeLogin()" type="button" class="mdl-button close">Cancel</button>
-        <button onclick="pageEvents.login()" type="button" class="mdl-button">Login</button>
-      </div>
-    </dialog>
+    <login-dialog v-bind:toggle-logged-in="toggleLoggedIn"></login-dialog>
+    <register-dialog v-bind:toggle-logged-in="toggleLoggedIn">
+    </register-dialog>
 
-    <dialog id="register-dialog" class="mdl-dialog">
-      <h4 class="mdl-dialog__title">Login</h4>
-      <div class="mdl-dialog__content">
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="text" id="register-username">
-            <label class="mdl-textfield__label" for="register-username">Username</label>
-          </div>
-        </div>
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="password" id="register-password">
-            <label class="mdl-textfield__label" for="register-password">Password</label>
-          </div>
-        </div>
-        <div class="mdl-grid center-items">
-          <!-- Simple Textfield -->
-          <div class="mdl-textfield mdl-js-textfield">
-            <span id="register-error"></span>
-          </div>
-        </div>
-      </div>
-      <div class="mdl-dialog__actions">
-        <button onclick="pageEvents.closeRegister()" type="button" class="mdl-button close">Cancel</button>
-        <button onclick="pageEvents.register()" type="button" class="mdl-button">Register</button>
-      </div>
-    </dialog>
   </div>
-  <script id="item-row" type="text/template">
-    <tr id='{{row-id}}'>      
-      <td class="mdl-data-table__cell--non-numeric">{{name}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{cost}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{quantity}}</td>
-      <td class="mdl-data-table__cell">{{subTotal}}</td>
-      <td class="mdl-data-table__cell--non-numeric">
-            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-            onclick="pageEvents.deleteItem('{{item-id}}')">
-            <i class="material-icons">remove</i>
-            </button>
-      </td>
-    </tr>
-</script>
 
   <script src="/hoodie/client.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-  <script src="resources/system.js"></script>
-  <script>
-    System.config({ "baseURL": "js/transpiled" });
-    System.import("index.js");
-  </script>
+  <script src="js/src/shared.js"></script>
+  <script src="js/src/index.js"></script>
 </body>
 
 </html>

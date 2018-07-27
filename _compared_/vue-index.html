@@ -1,0 +1,24 @@
+<div>
+  <form v-on:submit.prevent="onSubmit">
+    <div class="mdl-grid center-items">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="new-item-name" v-model="name">
+        <label class="mdl-textfield__label" for="new-item-name">Item Name</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="number" id="new-item-cost" v-model="cost">
+        <label class="mdl-textfield__label" for="new-item-cost">Item Cost</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="number" id="new-item-quantity" v-model="quantity">
+        <label class="mdl-textfield__label" for="new-item-quantity">Quantity</label>
+      </div>
+    </div>
+
+    <div class="mdl-grid center-items">
+      <button id="add-item" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+        Add Item
+      </button>
+    </div>
+  </form>
+</div>
